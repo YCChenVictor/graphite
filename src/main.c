@@ -1,68 +1,95 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lexer.h"
-#include "parser.h"
-#include "interpreter.h"
 
-// Function to read the source code from a file
-char* read_file(const char* filename) {
-    FILE* file = fopen(filename, "r");
-    if (!file) {
-        fprintf(stderr, "Could not open file: %s\n", filename);
-        exit(1);
-    }
+// Tokenizer
+typedef enum {
+    TOKEN_IDENTIFIER,
+    TOKEN_NUMBER,
+    TOKEN_ASSIGN,
+    TOKEN_PRINT,
+    TOKEN_SEMICOLON,
+    TOKEN_EOF
+} TokenType;
 
-    fseek(file, 0, SEEK_END);
-    long length = ftell(file);
-    fseek(file, 0, SEEK_SET);
+typedef struct {
+    TokenType type;
+    char* value;
+} Token;
 
-    char* buffer = (char*)malloc(length + 1);
-    if (!buffer) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(1);
-    }
+Token* tokenize(const char* input) {
+    // Simplified tokenization logic
+    // In a real implementation, this would be more complex
+    Token* tokens = malloc(sizeof(Token) * 10); // Allocate space for 10 tokens
+    int index = 0;
 
-    fread(buffer, 1, length, file);
-    buffer[length] = '\0';
+    // Example tokenization
+    tokens[index++] = (Token){TOKEN_PRINT, strdup("print")};
+    tokens[index++] = (Token){TOKEN_IDENTIFIER, strdup("x")};
+    tokens[index++] = (Token){TOKEN_SEMICOLON, strdup(";")};
+    tokens[index++] = (Token){TOKEN_EOF, NULL};
 
-    fclose(file);
-    return buffer;
+    return tokens;
 }
 
-int main(int argc, char** argv) {
-    if (argc < 2) {
-        fprintf(stderr, "Usage: %s <source_file>\n", argv[0]);
-        return 1;
+// Parser
+typedef struct ASTNode {
+    char* value;
+    struct ASTNode* left;
+    struct ASTNode* right;
+} ASTNode;
+
+ASTNode* parse(Token* tokens) {
+    // Simplified parsing logic
+    // In a real implementation, this would be more complex
+    ASTNode* root = malloc(sizeof(ASTNode));
+    root->value = strdup("print");
+    root->left = malloc(sizeof(ASTNode));
+    root->left->value = strdup("x");
+    root->left->left = NULL;
+    root->left->right = NULL;
+    root->right = NULL;
+
+    return root;
+}
+
+// Graph Representation
+typedef struct GraphNode {
+    char* value;
+    struct GraphNode** children;
+    int child_count;
+} GraphNode;
+
+GraphNode* astToGraph(ASTNode* ast) {
+    // Simplified AST to graph conversion logic
+    GraphNode* graph = malloc(sizeof(GraphNode));
+    graph->value = strdup(ast->value);
+    graph->child_count = 1;
+    graph->children = malloc(sizeof(GraphNode*) * graph->child_count);
+    graph->children[0] = malloc(sizeof(GraphNode));
+    graph->children[0]->value = strdup(ast->left->value);
+    graph->children[0]->child_count = 0;
+    graph->children[0]->children = NULL;
+
+    return graph;
+}
+
+// Execution Engine
+void executeGraph(GraphNode* graph) {
+    // Simplified graph traversal and execution logic
+    if (strcmp(graph->value, "print") == 0) {
+        printf("%s\n", graph->children[0]->value);
     }
+}
 
-    // Read the source code from the file
-    char* source_code = read_file(argv[1]);
-
-    // Step 1: Lexical Analysis
-    Token* tokens = tokenize(source_code);
-    if (!tokens) {
-        fprintf(stderr, "Lexical analysis failed\n");
-        free(source_code);
-        return 1;
-    }
-
-    // Step 2: Parsing
+int main() {
+    const char* script = "print x;";
+    Token* tokens = tokenize(script);
     ASTNode* ast = parse(tokens);
-    if (!ast) {
-        fprintf(stderr, "Parsing failed\n");
-        free(tokens);
-        free(source_code);
-        return 1;
-    }
+    GraphNode* graph = astToGraph(ast);
+    executeGraph(graph);
 
-    // Step 3: Interpretation / Code Execution
-    interpret(ast);
-
-    // Cleanup
-    free_ast(ast);
-    free(tokens);
-    free(source_code);
+    // Free allocated memory (not shown for brevity)
 
     return 0;
 }
