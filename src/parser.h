@@ -9,6 +9,7 @@ typedef struct ASTNode {
     char* value;
     struct ASTNode* left;
     struct ASTNode* right;
+    struct ASTNode* body;
 } ASTNode;
 
 ASTNode* parse(Token* tokens);
