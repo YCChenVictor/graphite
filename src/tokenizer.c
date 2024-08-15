@@ -4,7 +4,7 @@
 #include "tokenizer.h"
 
 char** tokenize(const char* input) {
-    char delimiters[] = " {}();";
+    char delimiters[] = " {}();,.!?\"'\\/:[]<>@#$%^&*+-=|`~\t\n";
     char* input_copy = strdup(input); // Make a copy of the input string
     int token_count = 0;
     char* token = strtok(input_copy, delimiters);

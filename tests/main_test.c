@@ -26,14 +26,50 @@ void print_ast(ASTNode* node, int depth) {
     print_ast(node->body, depth + 1);
 }
 
-void test_for_loop_interpreter() {
-    const char* input = "for node in graph { print(node); }";
-    Token *tokens = (Token *)(tokenize(input));
-    ASTNode* ast = parse(tokens);
-    interpret(ast);
+char* read_file(const char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Failed to open file");
+        return NULL;
+    }
 
-    free(tokens);
-    free(ast);
+    // Get the file size
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    // Allocate buffer to hold the file contents
+    char* input = (char*)malloc(file_size + 1);
+    if (input == NULL) {
+        perror("Failed to allocate memory");
+        fclose(file);
+        return NULL;
+    }
+
+    // Read the file into the buffer
+    fread(input, 1, file_size, file);
+    input[file_size] = '\0'; // Null-terminate the string
+
+    fclose(file);
+    return input;
+}
+
+void test_for_loop_interpreter() {
+    const char* filename = "for_loop_script.gh";
+    char* input = read_file(filename);
+    if (input != NULL) {
+        printf("File content:\n%s\n", input);
+    } else {
+        printf("Failed to read file.\n");
+    }
+
+    Token *tokens = (Token *)(tokenize(input));
+    print_tokens(tokens);
+    // ASTNode* ast = parse(tokens);
+    // interpret(ast);
+
+    // free(tokens);
+    // free(ast);
 }
 
 int main() {
