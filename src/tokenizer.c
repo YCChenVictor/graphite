@@ -1,16 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "tokenizer.h"
 
-Token* tokenize(const char* input) {
-    // Simplified tokenization logic
-    // In a real implementation, this would be more complex
-    Token* tokens = malloc(sizeof(Token) * 10); // Allocate space for 10 tokens
+char** tokenize(const char* input) {
+    char delimiters[] = " {}();";
+    char* input_copy = strdup(input); // Make a copy of the input string
+    int token_count = 0;
+    char* token = strtok(input_copy, delimiters);
+
+    // First pass to count tokens
+    while (token != NULL) {
+        token_count++;
+        token = strtok(NULL, delimiters);
+    }
+
+    // Allocate memory for tokens array
+    char** tokens = (char**)malloc((token_count + 1) * sizeof(char*));
+    strcpy(input_copy, input); // Reset input_copy
+    token = strtok(input_copy, delimiters);
     int index = 0;
 
-    // Example tokenization
-    tokens[index++] = (Token){TOKEN_PRINT, strdup("print")};
-    tokens[index++] = (Token){TOKEN_IDENTIFIER, strdup("x")};
-    tokens[index++] = (Token){TOKEN_SEMICOLON, strdup(";")};
-    tokens[index++] = (Token){TOKEN_EOF, NULL};
+    // Second pass to store tokens
+    while (token != NULL) {
+        tokens[index] = strdup(token);
+        index++;
+        token = strtok(NULL, delimiters);
+    }
+    tokens[index] = NULL; // Null-terminate the array
 
+    free(input_copy); // Free the copy of the input string
     return tokens;
+}
+
+void free_tokens(char** tokens) {
+    int index = 0;
+    while (tokens[index] != NULL) {
+        free(tokens[index]);
+        index++;
+    }
+    free(tokens);
 }
