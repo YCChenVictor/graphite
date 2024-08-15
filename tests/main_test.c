@@ -27,13 +27,10 @@ void print_ast(ASTNode* node, int depth) {
 }
 
 void test_for_loop_interpreter() {
-    const char* input = "for node in graph { doSomething(node); }";
+    const char* input = "for node in graph { print(node); }";
     Token *tokens = (Token *)(tokenize(input));
-    print_tokens(tokens);
     ASTNode* ast = parse(tokens);
-    print_ast(ast, 0);
-
-    // interpret(ast); // engine
+    interpret(ast);
 
     free(tokens);
     free(ast);
