@@ -13,7 +13,7 @@ void print_tokens(Token* tokens) {
     }
 }
 
-void print_ast(ASTNode* program) {
+void print_ast(Program* program) {
     NodeDeclaration* nodeDecl = program->nodeDeclarations;
     while (nodeDecl) {
         printf("NodeDeclaration: %s, Parent: %s, Value: %d\n", nodeDecl->name, nodeDecl->parent, nodeDecl->value);
@@ -71,9 +71,9 @@ void test_for_loop_interpreter() {
 
     Token *tokens = (Token *)(tokenize(input));
     // print_tokens(tokens);
-    ASTNode* ast = parse(tokens);
+    Program* ast = parse(tokens);
     // print_ast(ast);
-    // interpret(ast);
+    interpret(ast);
 
     // free(tokens);
     // free(ast);

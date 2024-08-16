@@ -25,10 +25,10 @@ typedef struct ForLoop {
     struct ForLoop *next;
 } ForLoop;
 
-typedef struct ASTNode {
+typedef struct Program {
     NodeDeclaration *nodeDeclarations;
     ForLoop *forLoops;
-} ASTNode;
+} Program;
 
 typedef struct Parser {
     Token *tokens;
@@ -36,12 +36,12 @@ typedef struct Parser {
     int tokenCount;
 } Parser;
 
-typedef struct Node {
+typedef struct ASTNode {
     int data;
     struct Node* next;
-} Node;
+} ASTNode;
 
-ASTNode* parse(Token* tokens);
+Program* parse(Token* tokens);
 int countTokens(Token *tokens);
 
 

@@ -58,13 +58,13 @@ ForLoop* parseForLoop(Parser *parser) {
     return forLoop;
 }
 
-ASTNode* parse(Token *tokens) {
+Program* parse(Token *tokens) {
     Parser parser;
     parser.tokens = tokens;
     parser.current = 0;
     parser.tokenCount = countTokens(tokens);
 
-    ASTNode *program = (ASTNode*)malloc(sizeof(ASTNode));
+    Program *program = (Program*)malloc(sizeof(Program));
     program->nodeDeclarations = NULL;
     program->forLoops = NULL;
 
@@ -83,5 +83,5 @@ ASTNode* parse(Token *tokens) {
         }
     }
 
-    return (ASTNode*)program;
+    return (Program*)program;
 }
