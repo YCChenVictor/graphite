@@ -1,55 +1,87 @@
-#include "parser.h"
+// Program
+// ├── NodeDeclaration: node0, Parent: null, Value: 0
+// ├── NodeDeclaration: node1, Parent: node, Value: 1
+// └── ForLoop: Variable: node, Start: node0, End: node1
+//     └── PrintStatement: Variable: node
+
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "parser.h"
 
-#define FOR_LOOP 1
-#define LOOP_VARIABLE 2
-#define ITERABLE 3
-#define FUNCTION_CALL 4
-#define ARGUMENT 5
-
-ASTNode* create_node(int type, char* value) {
-    // Allocate memory for the new node
-    ASTNode* new_node = (ASTNode*)malloc(sizeof(ASTNode));
-    if (new_node == NULL) {
-        // Handle memory allocation failure
-        return NULL;
+int countTokens(Token *tokens) {
+    int count = 0;
+    while (tokens[count].value != NULL) {
+        count++;
     }
-
-    // Initialize the node's type and value
-    new_node->type = type;
-    new_node->value = value ? strdup(value) : NULL; // Duplicate the string to avoid issues with token memory
-    new_node->left = NULL;
-    new_node->right = NULL;
-    new_node->body = NULL;
-
-    // Return the pointer to the new node
-    return new_node;
+    return count;
 }
 
-ASTNode* parse(Token* tokens) {
-    int index = 0;
+int isToken(Parser *parser, const char *token) {
+    return parser->current < parser->tokenCount && strcmp(parser->tokens[parser->current].value, token) == 0;
+}
 
-    // Create the root node for the 'for' loop
-    ASTNode* root = create_node(FOR_LOOP, tokens[index++].value); // 'for'
+void advanceToken(Parser *parser) {
+    if (parser->current < parser->tokenCount) {
+        parser->current++;
+    }
+}
 
-    // Create the node for the loop variable
-    ASTNode* var_node = create_node(LOOP_VARIABLE, tokens[index++].value); // 'node'
-    root->left = var_node;
+NodeDeclaration* parseNodeDeclaration(Parser *parser) {
+    NodeDeclaration *nodeDecl = (NodeDeclaration*)malloc(sizeof(NodeDeclaration));
+    nodeDecl->name = parser->tokens[parser->current++].value;
+    advanceToken(parser); // Skip "parent"
+    nodeDecl->parent = parser->tokens[parser->current++].value;
+    advanceToken(parser); // Skip "value"
+    nodeDecl->value = atoi(parser->tokens[parser->current++].value);
+    nodeDecl->next = NULL;
+    return nodeDecl;
+}
 
-    // Skip the 'in' token
-    index++;
+PrintStatement* parsePrintStatement(Parser *parser) {
+    PrintStatement *printStmt = (PrintStatement*)malloc(sizeof(PrintStatement));
+    advanceToken(parser); // Skip "print"
+    printStmt->variable = parser->tokens[parser->current++].value;
+    printStmt->next = NULL;
+    return printStmt;
+}
 
-    // Create the node for the iterable
-    ASTNode* iterable_node = create_node(ITERABLE, tokens[index++].value); // 'graph'
-    root->right = iterable_node;
+ForLoop* parseForLoop(Parser *parser) {
+    ForLoop *forLoop = (ForLoop*)malloc(sizeof(ForLoop));
+    advanceToken(parser); // Skip "for"
+    forLoop->variable = parser->tokens[parser->current++].value;
+    advanceToken(parser); // Skip "in"
+    forLoop->start = parser->tokens[parser->current++].value;
+    forLoop->end = parser->tokens[parser->current++].value;
+    forLoop->printStatements = parsePrintStatement(parser);
+    forLoop->next = NULL;
+    return forLoop;
+}
 
-    // Create the body node
-    ASTNode* body_node = create_node(FUNCTION_CALL, tokens[index++].value); // 'doSomething'
-    root->body = body_node;
+ASTNode* parse(Token *tokens) {
+    Parser parser;
+    parser.tokens = tokens;
+    parser.current = 0;
+    parser.tokenCount = countTokens(tokens);
 
-    // Create the argument node for the function call
-    ASTNode* arg_node = create_node(ARGUMENT, tokens[index++].value); // 'node'
-    body_node->left = arg_node;
+    ASTNode *program = (ASTNode*)malloc(sizeof(ASTNode));
+    program->nodeDeclarations = NULL;
+    program->forLoops = NULL;
 
-    return root;
+    NodeDeclaration **nodeDeclTail = &program->nodeDeclarations;
+    ForLoop **forLoopTail = &program->forLoops;
+
+    while (parser.current < parser.tokenCount) {
+        if (isToken(&parser, "node0") || isToken(&parser, "node1")) {
+            *nodeDeclTail = parseNodeDeclaration(&parser);
+            nodeDeclTail = &(*nodeDeclTail)->next;
+        } else if (isToken(&parser, "for")) {
+            *forLoopTail = parseForLoop(&parser);
+            forLoopTail = &(*forLoopTail)->next;
+        } else {
+            advanceToken(&parser);
+        }
+    }
+
+    return (ASTNode*)program;
 }

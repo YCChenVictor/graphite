@@ -13,9 +13,9 @@ typedef struct GraphNode {
 int main() {
     const char* script = "print x;";
     Token* tokens = tokenize(script);
-    ASTNode* ast = parse(tokens);
-    GraphNode* graph = astToGraph(ast);
-    executeGraph(graph);
+    // ASTNode* ast = parse(tokens);
+    // GraphNode* graph = astToGraph(ast);
+    // executeGraph(graph);
 
     // Free allocated memory (not shown for brevity)
 

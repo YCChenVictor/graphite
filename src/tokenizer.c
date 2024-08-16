@@ -3,6 +3,24 @@
 #include <stdlib.h>
 #include "tokenizer.h"
 
+// Token: node0
+// Token: parent
+// Token: null
+// Token: value
+// Token: 0
+// Token: node1
+// Token: parent
+// Token: node
+// Token: value
+// Token: 1
+// Token: for
+// Token: node
+// Token: in
+// Token: node0
+// Token: node1
+// Token: print
+// Token: node
+// Token: value
 char** tokenize(const char* input) {
     char delimiters[] = " {}();,.!?\"'\\/:[]<>@#$%^&*+-=|`~\t\n";
     char* input_copy = strdup(input); // Make a copy of the input string

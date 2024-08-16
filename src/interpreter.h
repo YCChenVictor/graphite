@@ -11,8 +11,6 @@ typedef struct GraphNode {
     int child_count;
 } GraphNode;
 
-GraphNode* astToGraph(ASTNode* ast);
 void executeGraph(GraphNode* graph);
-void interpret(ASTNode* ast);
 
 #endif // INTERPRETER_H

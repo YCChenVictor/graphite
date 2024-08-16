@@ -13,17 +13,23 @@ void print_tokens(Token* tokens) {
     }
 }
 
-void print_ast(ASTNode* node, int depth) {
-    if (node == NULL) {
-        return;
+void print_ast(ASTNode* program) {
+    NodeDeclaration* nodeDecl = program->nodeDeclarations;
+    while (nodeDecl) {
+        printf("NodeDeclaration: %s, Parent: %s, Value: %d\n", nodeDecl->name, nodeDecl->parent, nodeDecl->value);
+        nodeDecl = nodeDecl->next;
     }
-    for (int i = 0; i < depth; i++) {
-        printf("  ");
+
+    ForLoop* forLoop = program->forLoops;
+    while (forLoop) {
+        printf("ForLoop: Variable: %s, Start: %s, End: %s\n", forLoop->variable, forLoop->start, forLoop->end);
+        PrintStatement* printStmt = forLoop->printStatements;
+        while (printStmt) {
+            printf("    PrintStatement: Variable: %s\n", printStmt->variable);
+            printStmt = printStmt->next;
+        }
+        forLoop = forLoop->next;
     }
-    printf("Node Type: %d, Value: %s\n", node->type, node->value);
-    print_ast(node->left, depth + 1);
-    print_ast(node->right, depth + 1);
-    print_ast(node->body, depth + 1);
 }
 
 char* read_file(const char* filename) {
@@ -64,8 +70,9 @@ void test_for_loop_interpreter() {
     }
 
     Token *tokens = (Token *)(tokenize(input));
-    print_tokens(tokens);
-    // ASTNode* ast = parse(tokens);
+    // print_tokens(tokens);
+    ASTNode* ast = parse(tokens);
+    // print_ast(ast);
     // interpret(ast);
 
     // free(tokens);
