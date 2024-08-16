@@ -1,0 +1,7 @@
+node0 = { parent: null, value: 0 }
+node1 = { parent: node0, value: 1 }
+node2 = { parent: node1, value: 2 }
+
+for node in (node0..node2) {
+    print(node.value);
+};
