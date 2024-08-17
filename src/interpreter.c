@@ -3,9 +3,7 @@
 #include <stdlib.h>
 #include "interpreter.h"
 
-#define FOR_LOOP 1
-#define PRINT_STATEMENT 2
-
+// use not use dfs to build up the path, so seems we do not need the ForLoop 
 void dfs(NodeDeclaration* node, NodeDeclaration* nodes[], int* visited, int size) {
     if (!node || visited[node->value]) return;
     printf("%d\n", node->value);

@@ -17,8 +17,25 @@ void tearDown(void) {
 
 void test_process_file(void) {
     const char* filename = "../scripts/for_loop_two_node.gh";
+    
+    // Redirect stdout to a buffer
+    char buffer[128];
+    memset(buffer, 0, sizeof(buffer));
+    FILE* original_stdout = stdout;
+    FILE* temp_stdout = fmemopen(buffer, sizeof(buffer), "w");
+    stdout = temp_stdout;
+
+    // Call the function
     process_file(filename);
-    // Add assertions to verify the expected behavior
+
+    // Restore stdout
+    fflush(stdout);
+    stdout = original_stdout;
+    fclose(temp_stdout);
+
+    // Check the buffer for expected output
+    TEST_ASSERT_NOT_NULL(strstr(buffer, "0"));
+    TEST_ASSERT_NOT_NULL(strstr(buffer, "1"));
 }
 
 int main(void) {
