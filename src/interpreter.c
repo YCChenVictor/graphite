@@ -44,5 +44,5 @@ void interpret(Program* program) {
         nodeDecl = nodeDecl->next;
     }
 
-    ForLoop* forLoop = program->forLoops;
+    // ForLoop* forLoop = program->forLoops;
 }

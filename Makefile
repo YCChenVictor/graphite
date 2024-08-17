@@ -1,4 +1,4 @@
-# Makefile for running unit tests with Unity
+# run test: make test
 
 # Compiler and flags
 CC = gcc
@@ -17,7 +17,7 @@ TEST_FILES = $(wildcard $(TEST_DIR)/*.c)
 TARGET = $(BUILD_DIR)/test_runner
 
 # Unity framework
-UNITY_DIR = unity
+UNITY_DIR = Unity
 UNITY_SRC = $(UNITY_DIR)/src/unity.c
 
 # Ensure build directory exists
@@ -25,7 +25,8 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 # Build target
-$(TARGET): $(SRC_FILES) $(TEST_FILES) $(UNITY_SRC)
+$(TARGET): $(BUILD_DIR) $(SRC_FILES) $(TEST_FILES) $(UNITY_SRC)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SRC_FILES) $(TEST_FILES) $(UNITY_SRC)
 
 # Run tests
 .PHONY: test
