@@ -72,7 +72,7 @@ Program* parse(Token *tokens) {
     ForLoop **forLoopTail = &program->forLoops;
 
     while (parser.current < parser.tokenCount) {
-        if (isToken(&parser, "node0") || isToken(&parser, "node1")) {
+        if (strncmp(parser.tokens[parser.current].value, "node", 4) == 0) {
             *nodeDeclTail = parseNodeDeclaration(&parser);
             nodeDeclTail = &(*nodeDeclTail)->next;
         } else if (isToken(&parser, "for")) {
