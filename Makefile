@@ -1,4 +1,5 @@
-# run test: make test
+# compile test: make test
+# run test: ./build/test_runner/
 
 # Compiler and flags
 CC = gcc
@@ -31,6 +32,7 @@ $(TARGET): $(BUILD_DIR) $(SRC_FILES) $(TEST_FILES) $(UNITY_SRC)
 # Run tests
 .PHONY: test
 test: $(TARGET)
+	cd build && ./test_runner
 
 # Clean build directory
 .PHONY: clean
