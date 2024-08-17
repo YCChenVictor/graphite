@@ -2,9 +2,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "../src/tokenizer.h"
-#include "../src/parser.h"
-#include "../src/interpreter.h"
+#include "tokenizer.h"
+#include "parser.h"
+#include "interpreter.h"
 
 void print_tokens(Token* tokens);
 void print_ast(Program* program);
