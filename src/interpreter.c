@@ -57,38 +57,47 @@ void add_edge(Graph* graph, int src, int dest, const char* name) {
     }
 }
 
-void dfsUtil(Graph* graph, int v, int endNode, int* visited, bool* endReached) {
+void dfs_util(Graph* graph, int v, int endNode, int* visited, bool* endReached, int* path, int pathIndex, int* finalPath, int* finalPathLength) {
     if (*endReached) return; // Stop if end node has been reached
 
     visited[v] = 1;
-    printf("%d ", v);
+    path[pathIndex] = v;
+    pathIndex++;
 
     if (v == endNode) {
         *endReached = true;
+        memcpy(finalPath, path, pathIndex * sizeof(int)); // when end node is reached, copy the path to finalPath
+        *finalPathLength = pathIndex;
         return;
     }
 
     AdjListNode* pCrawl = graph->array[v].head;
     while (pCrawl != NULL) {
         if (!visited[pCrawl->dest]) {
-            dfsUtil(graph, pCrawl->dest, endNode, visited, endReached);
+            dfs_util(graph, pCrawl->dest, endNode, visited, endReached, path, pathIndex, finalPath, finalPathLength);
+            if (*endReached) return; // Stop further exploration if end node is found
         }
         pCrawl = pCrawl->next;
     }
 }
 
-
 void dfs(Graph* graph, int startVertex, int endNode) {
-    // Mark all the vertices as not visited
     int* visited = (int*)malloc(graph->num_vertices * sizeof(int));
     for (int i = 0; i < graph->num_vertices; i++) {
         visited[i] = 0;
     }
 
-    bool endReached = false; // Initialize the flag
+    bool endReached = false;
+    int path[graph->num_vertices];
+    int finalPath[graph->num_vertices];
+    int finalPathLength = 0;
 
-    // Call the recursive helper function to print DFS traversal
-    dfsUtil(graph, startVertex, endNode, visited, &endReached);
+    dfs_util(graph, startVertex, endNode, visited, &endReached, path, 0, finalPath, &finalPathLength);
+
+    // Print the final path
+    for (int i = 0; i < finalPathLength; i++) {
+        printf("%d ", finalPath[i]);
+    }
 
     free(visited);
 }
