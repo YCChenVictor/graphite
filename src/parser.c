@@ -1,3 +1,4 @@
+// Definition: The syntax tree abstracts away certain details like parentheses and other punctuation that are not necessary for understanding the structural or semantic meaning of the code.
 // Program
 // ├── NodeDeclaration: node0, Parent: null, Value: 0
 // ├── NodeDeclaration: node1, Parent: node, Value: 1

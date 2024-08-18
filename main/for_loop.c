@@ -3,7 +3,7 @@
 #include "../src/main.h"
 
 int main() {
-    process_file("../scripts/for_loop_four_nodes.gh");
+    process_file("../scripts/for_loop_tree.gh");
 
     return 0;
 }
