@@ -5,13 +5,21 @@
 #include <string.h>
 #include "parser.h"
 
-typedef struct GraphNode {
-    char* value;
-    struct GraphNode** children;
-    int child_count;
-} GraphNode;
+typedef struct AdjListNode {
+    int dest;
+    char* name;
+    struct AdjListNode* next;
+} AdjListNode;
+
+typedef struct AdjList {
+    AdjListNode* head;
+} AdjList;
+
+typedef struct Graph {
+    int num_vertices;
+    AdjList* array;
+} Graph;
 
 void interpret(Program* node);
-void executeGraph(GraphNode* graph);
 
 #endif // INTERPRETER_H
