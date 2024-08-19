@@ -57,28 +57,33 @@ void add_edge(Graph* graph, int src, int dest, const char* name) {
     }
 }
 
-void dfs_util(Graph* graph, int v, int endNode, int* visited, bool* endReached, int* path, int pathIndex, int* finalPath, int* finalPathLength) {
-    if (*endReached) return; // Stop if end node has been reached
-
-    visited[v] = 1;
-    path[pathIndex] = v;
+void dfs_util(Graph* graph, int currentVertex, int endNode, int* visited, bool* endReached, int* path, int pathIndex, int* finalPath, int* finalPathLength, int* shortestPathLength) {
+    visited[currentVertex] = 1;
+    path[pathIndex] = currentVertex;
     pathIndex++;
 
-    if (v == endNode) {
+    if (currentVertex == endNode) {
         *endReached = true;
-        memcpy(finalPath, path, pathIndex * sizeof(int)); // when end node is reached, copy the path to finalPath
-        *finalPathLength = pathIndex;
-        return;
+        if (pathIndex < *shortestPathLength) {
+            *shortestPathLength = pathIndex;
+            *finalPathLength = pathIndex;
+            for (int i = 0; i < pathIndex; i++) {
+                finalPath[i] = path[i];
+            }
+        }
+    } else {
+        AdjListNode* adjList = graph->array[currentVertex].head;
+        while (adjList != NULL) {
+            int connectedVertex = adjList->dest;
+            if (!visited[connectedVertex]) {
+                dfs_util(graph, connectedVertex, endNode, visited, endReached, path, pathIndex, finalPath, finalPathLength, shortestPathLength);
+            }
+            adjList = adjList->next;
+        }
     }
 
-    AdjListNode* pCrawl = graph->array[v].head;
-    while (pCrawl != NULL) {
-        if (!visited[pCrawl->dest]) {
-            dfs_util(graph, pCrawl->dest, endNode, visited, endReached, path, pathIndex, finalPath, finalPathLength);
-            if (*endReached) return; // Stop further exploration if end node is found
-        }
-        pCrawl = pCrawl->next;
-    }
+    pathIndex--;
+    visited[currentVertex] = 0;
 }
 
 void dfs(Graph* graph, int startVertex, int endNode) {
@@ -91,13 +96,18 @@ void dfs(Graph* graph, int startVertex, int endNode) {
     int path[graph->num_vertices];
     int finalPath[graph->num_vertices];
     int finalPathLength = 0;
+    int shortestPathLength = graph->num_vertices + 1; // Initialize with a large value
 
-    dfs_util(graph, startVertex, endNode, visited, &endReached, path, 0, finalPath, &finalPathLength);
+    dfs_util(graph, startVertex, endNode, visited, &endReached, path, 0, finalPath, &finalPathLength, &shortestPathLength);
 
     // Print the final path
     for (int i = 0; i < finalPathLength; i++) {
         printf("%d ", finalPath[i]);
     }
+    // printf("\n");
+
+    // Print the final path length
+    // printf("Final Path Length: %d\n", finalPathLength);
 
     free(visited);
 }
