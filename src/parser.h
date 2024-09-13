@@ -7,8 +7,9 @@
 
 typedef struct NodeDeclaration {
     char *name;
-    char *parent;
     int value;
+    struct NodeDeclaration **parents; // Array of parent nodes
+    int parentCount; // Number of parent nodes
     struct NodeDeclaration *next;
 } NodeDeclaration;
 
@@ -25,15 +26,22 @@ typedef struct ForLoop {
     struct ForLoop *next;
 } ForLoop;
 
+typedef struct ParentNode {
+    char *name;
+    struct ParentNode *next;
+} ParentNode;
+
 typedef struct Program {
     NodeDeclaration *nodeDeclarations;
     ForLoop *forLoops;
+    ParentNode *parentNodes;
 } Program;
 
 typedef struct Parser {
     Token *tokens;
     int current;
     int tokenCount;
+    NodeDeclaration *nodeDeclarations;
 } Parser;
 
 typedef struct ASTNode {

@@ -1,11 +1,8 @@
-node0 = { parent: null, value: 0 }
+node0 = { parent: node4, value: 0 }
 node1 = { parent: node0, value: 1 }
-node4 = { parent: node0, value: 4 }
 node2 = { parent: node1, value: 2 }
-node3 = { parent: node1, value: 3 }
-node4 = { parent: node1, value: 4 }
-node3 = { parent: node2, value: 3 }
-node4 = { parent: node2, value: 4 }
+node3 = { parent: [node1, node2], value: 3 }
+node4 = { parent: [node1, node2], value: 4 }
 
 for node in (node1..node4) {
     print(node.value);

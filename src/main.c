@@ -7,7 +7,7 @@ void process_file(const char* filename) {
     Token *tokens = (Token *)(tokenize(input));
     // print_tokens(tokens);
     Program* ast = parse(tokens);
-    // print_ast(ast);
+    print_ast(ast);
     interpret(ast);
 
     // free(tokens);

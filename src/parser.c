@@ -28,14 +28,44 @@ void advanceToken(Parser *parser) {
     }
 }
 
+NodeDeclaration* findNodeByName(NodeDeclaration* head, const char* name) {
+    NodeDeclaration* current = head;
+    while (current != NULL) {
+        if (strcmp(current->name, name) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
 NodeDeclaration* parseNodeDeclaration(Parser *parser) {
     NodeDeclaration *nodeDecl = (NodeDeclaration*)malloc(sizeof(NodeDeclaration));
-    nodeDecl->name = parser->tokens[parser->current++].value;
-    advanceToken(parser); // Skip "parent"
-    nodeDecl->parent = parser->tokens[parser->current++].value;
-    advanceToken(parser); // Skip "value"
-    nodeDecl->value = atoi(parser->tokens[parser->current++].value);
+    nodeDecl->name = strdup(parser->tokens[parser->current].value);
+    nodeDecl->parents = NULL;
+    nodeDecl->parentCount = 0;
     nodeDecl->next = NULL;
+
+    advanceToken(parser); // Move past the "node" token
+
+    // Parse parent nodes
+    if (isToken(parser, "parent")) {
+        advanceToken(parser); // Move past the "parent" token
+
+        // Allocate initial space for parent nodes
+        nodeDecl->parents = (NodeDeclaration**)malloc(sizeof(NodeDeclaration*) * 10); // Initial capacity
+        int capacity = 10;
+
+        while (isToken(parser, "node")) {
+            if (nodeDecl->parentCount >= capacity) {
+                capacity *= 2;
+                nodeDecl->parents = (NodeDeclaration**)realloc(nodeDecl->parents, sizeof(NodeDeclaration*) * capacity);
+            }
+            nodeDecl->parents[nodeDecl->parentCount++] = findNodeByName(parser->nodeDeclarations, parser->tokens[parser->current].value);
+            advanceToken(parser); // Move past the parent node token
+        }
+    }
+
     return nodeDecl;
 }
 
@@ -68,6 +98,7 @@ Program* parse(Token *tokens) {
     Program *program = (Program*)malloc(sizeof(Program));
     program->nodeDeclarations = NULL;
     program->forLoops = NULL;
+    program->parentNodes = NULL;
 
     NodeDeclaration **nodeDeclTail = &program->nodeDeclarations;
     ForLoop **forLoopTail = &program->forLoops;

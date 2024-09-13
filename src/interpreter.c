@@ -131,10 +131,10 @@ void interpret(Program* program) {
 
     // Add edges to the graph
     while (nodeDecl != NULL) {
-        if (nodeDecl->parent != NULL) {
+        for (int i = 0; i < nodeDecl->parentCount; i++) {
             NodeDeclaration* parentDecl = program->nodeDeclarations;
             while (parentDecl != NULL) {
-                if (strcmp(parentDecl->name, nodeDecl->parent) == 0) {
+                if (strcmp(parentDecl->name, nodeDecl->parents[i]->name) == 0) {
                     add_edge(graph, parentDecl->value, nodeDecl->value, nodeDecl->name);
                     break;
                 }

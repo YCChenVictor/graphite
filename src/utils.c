@@ -13,7 +13,11 @@ void print_tokens(Token* tokens) {
 void print_ast(Program* program) {
     NodeDeclaration* nodeDecl = program->nodeDeclarations;
     while (nodeDecl) {
-        printf("NodeDeclaration: %s, Parent: %s, Value: %d\n", nodeDecl->name, nodeDecl->parent, nodeDecl->value);
+        printf("NodeDeclaration: %s, Parents: ", nodeDecl->name);
+        for (int i = 0; nodeDecl->parents[i] != NULL; i++) {
+            printf("%s ", nodeDecl->parents[i]->name);
+        }
+        printf(", Value: %d\n", nodeDecl->value);
         nodeDecl = nodeDecl->next;
     }
 
