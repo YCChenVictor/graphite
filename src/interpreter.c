@@ -125,23 +125,44 @@ void print_graph(Graph* graph) {
 }
 
 void interpret(Program* program) {
+    EdgeDeclaration* edgeDecl = program->edgeDeclarations;
     NodeDeclaration* nodeDecl = program->nodeDeclarations;
     ForLoop* forLoop = program->forLoops;
     Graph* graph = create_graph(count_nodes(nodeDecl));
 
     // Add edges to the graph
-    while (nodeDecl != NULL) {
-        if (nodeDecl->parent != NULL) {
-            NodeDeclaration* parentDecl = program->nodeDeclarations;
-            while (parentDecl != NULL) {
-                if (strcmp(parentDecl->name, nodeDecl->parent) == 0) {
-                    add_edge(graph, parentDecl->value, nodeDecl->value, nodeDecl->name);
+    while (edgeDecl != NULL) {
+        NodeDeclaration* fromNode = NULL;
+        NodeDeclaration* toNode = NULL;
+
+        // Find the 'from' node
+        if (edgeDecl->from != NULL) {
+            NodeDeclaration* nodeDecl = program->nodeDeclarations;
+            while (nodeDecl != NULL) {
+                if (strcmp(nodeDecl->name, edgeDecl->from) == 0) {
+                    fromNode = nodeDecl;
                     break;
                 }
-                parentDecl = parentDecl->next;
+                nodeDecl = nodeDecl->next;
             }
         }
-        nodeDecl = nodeDecl->next;
+
+        // Find the 'to' node
+        NodeDeclaration* nodeDecl = program->nodeDeclarations;
+        while (nodeDecl != NULL) {
+            if (strcmp(nodeDecl->name, edgeDecl->to) == 0) {
+                toNode = nodeDecl;
+                break;
+            }
+            nodeDecl = nodeDecl->next;
+        }
+
+        // Add the edge if both nodes are found
+        if (toNode != NULL && (fromNode != NULL || edgeDecl->from == NULL)) {
+            add_edge(graph, fromNode ? fromNode->value : -1, toNode->value, edgeDecl->name);
+        }
+
+        edgeDecl = edgeDecl->next;
     }
 
     // Find start and end nodes by name

@@ -13,8 +13,14 @@ void print_tokens(Token* tokens) {
 void print_ast(Program* program) {
     NodeDeclaration* nodeDecl = program->nodeDeclarations;
     while (nodeDecl) {
-        printf("NodeDeclaration: %s, Parent: %s, Value: %d\n", nodeDecl->name, nodeDecl->parent, nodeDecl->value);
+        printf("NodeDeclaration: %s, Value: %d\n", nodeDecl->name, nodeDecl->value);
         nodeDecl = nodeDecl->next;
+    }
+
+    EdgeDeclaration* edgeDecl = program->edgeDeclarations;
+    while (edgeDecl) {
+        printf("EdgeDeclaration: %s, To: %s, From: %s\n", edgeDecl->name, edgeDecl->to, edgeDecl->from);
+        edgeDecl = edgeDecl->next;
     }
 
     ForLoop* forLoop = program->forLoops;

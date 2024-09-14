@@ -31,12 +31,21 @@ void advanceToken(Parser *parser) {
 NodeDeclaration* parseNodeDeclaration(Parser *parser) {
     NodeDeclaration *nodeDecl = (NodeDeclaration*)malloc(sizeof(NodeDeclaration));
     nodeDecl->name = parser->tokens[parser->current++].value;
-    advanceToken(parser); // Skip "parent"
-    nodeDecl->parent = parser->tokens[parser->current++].value;
-    advanceToken(parser); // Skip "value"
+    advanceToken(parser); // Skip "value" token
     nodeDecl->value = atoi(parser->tokens[parser->current++].value);
     nodeDecl->next = NULL;
     return nodeDecl;
+}
+
+EdgeDeclaration* parseEdgeDeclaration(Parser *parser) {
+    EdgeDeclaration *edgeDecl = (EdgeDeclaration*)malloc(sizeof(EdgeDeclaration));
+    edgeDecl->name = parser->tokens[parser->current++].value; // Token: edge0
+    advanceToken(parser); // Skip "to" token
+    edgeDecl->to = parser->tokens[parser->current++].value; // Token: node0
+    advanceToken(parser); // Skip "from" token
+    edgeDecl->from = parser->tokens[parser->current++].value; // Token: null
+    edgeDecl->next = NULL;
+    return edgeDecl;
 }
 
 PrintStatement* parsePrintStatement(Parser *parser) {
@@ -70,14 +79,30 @@ Program* parse(Token *tokens) {
     program->forLoops = NULL;
 
     NodeDeclaration **nodeDeclTail = &program->nodeDeclarations;
+    EdgeDeclaration **edgeDeclTail = &program->edgeDeclarations;
     ForLoop **forLoopTail = &program->forLoops;
 
     while (parser.current < parser.tokenCount) {
         if (strncmp(parser.tokens[parser.current].value, "node", 4) == 0) {
             *nodeDeclTail = parseNodeDeclaration(&parser);
+            if (*nodeDeclTail == NULL) {
+                fprintf(stderr, "Failed to parse node declaration\n");
+                break;
+            }
             nodeDeclTail = &(*nodeDeclTail)->next;
+        } else if (strncmp(parser.tokens[parser.current].value, "edge", 4) == 0) {
+            *edgeDeclTail = parseEdgeDeclaration(&parser);
+            if (*edgeDeclTail == NULL) {
+                fprintf(stderr, "Failed to parse edge declaration\n");
+                break;
+            }
+            edgeDeclTail = &(*edgeDeclTail)->next;
         } else if (isToken(&parser, "for")) {
             *forLoopTail = parseForLoop(&parser);
+            if (*forLoopTail == NULL) {
+                fprintf(stderr, "Failed to parse for loop\n");
+                break;
+            }
             forLoopTail = &(*forLoopTail)->next;
         } else {
             advanceToken(&parser);

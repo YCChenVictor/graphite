@@ -5,6 +5,13 @@
 #include <string.h>
 #include "tokenizer.h"
 
+typedef struct EdgeDeclaration {
+    char *name;
+    char *from;
+    char *to;
+    struct EdgeDeclaration *next;
+} EdgeDeclaration;
+
 typedef struct NodeDeclaration {
     char *name;
     char *parent;
@@ -27,6 +34,7 @@ typedef struct ForLoop {
 
 typedef struct Program {
     NodeDeclaration *nodeDeclarations;
+    EdgeDeclaration *edgeDeclarations; // Add this line
     ForLoop *forLoops;
 } Program;
 

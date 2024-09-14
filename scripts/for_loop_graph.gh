@@ -1,11 +1,17 @@
-node0 = { parent: null, value: 0 }
-node1 = { parent: node0, value: 1 }
-node4 = { parent: node0, value: 4 }
-node2 = { parent: node1, value: 2 }
-node3 = { parent: node1, value: 3 }
-node4 = { parent: node1, value: 4 }
-node3 = { parent: node2, value: 3 }
-node4 = { parent: node2, value: 4 }
+node0 = { value: 0 }
+node1 = { value: 1 }
+node2 = { value: 2 }
+node3 = { value: 3 }
+node4 = { value: 4 }
+
+edge0 = { to: node0, from: null }
+edge1 = { to: node1, from: node0 }
+edge2 = { to: node4, from: node0 }
+edge3 = { to: node2, from: node1 }
+edge4 = { to: node3, from: node1 }
+edge5 = { to: node4, from: node1 }
+edge6 = { to: node3, from: node2 }
+edge7 = { to: node4, from: node2 }
 
 for node in (node1..node4) {
     print(node.value);
