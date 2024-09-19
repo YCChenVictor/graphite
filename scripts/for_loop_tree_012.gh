@@ -1,7 +1,12 @@
-node0 = { parent: null, value: 0 }
-node1 = { parent: node0, value: 1 }
-node2 = { parent: node1, value: 2 }
-node3 = { parent: node1, value: 3 }
+node0 = { value: 0 }
+node1 = { value: 1 }
+node2 = { value: 2 }
+node3 = { value: 3 }
+
+edge0 = { to: node0, from: null }
+edge1 = { to: node1, from: node0 }
+edge2 = { to: node2, from: node1 }
+edge3 = { to: node3, from: node1 }
 
 for node in (node0..node2) {
     print(node.value);
