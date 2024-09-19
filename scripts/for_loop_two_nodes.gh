@@ -1,5 +1,8 @@
-node0 = { parent: null, value: 0 }
-node1 = { parent: node0, value: 1 }
+node0 = { value: 0 }
+node1 = { value: 1 }
+
+edge0 = { to: node0 from: null }
+edge1 = { to: node1 from: node0 }
 
 for node in (node0..node1) {
     print(node.value);
